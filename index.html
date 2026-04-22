@@ -1,280 +1,1201 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Leitor de QR - Confirmação de Inscrição</title>
-
-<script src="https://unpkg.com/html5-qrcode"></script>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fábrica de Software – Ascendra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
-*{
-  box-sizing:border-box;
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-body{
-  margin:0;
-  font-family: "Inter","Segoe UI",Arial,sans-serif;
-  background:
-    radial-gradient(1200px 500px at top, #1e7f3f33, transparent),
-    linear-gradient(135deg, #0f3d1f, #0b5d2f, #0e7c43);
-  min-height:500vh;
-  display:flex;
-  align-items:flex-start;
-  justify-content:flex-start;
-  color:#ffffff;
-  padding-top: 14px;
-  padding-left: 90px;
-}
+  :root {
+    --teal-dark: #0B4C51;
+    --teal-mid: #0e6b73;
+    --teal-light: #14939f;
+    --teal-glow: #1dbfcc;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --white: #f4f2ee;
+    --off-white: #ece9e2;
+    --text: #1a1a1a;
+    --text-light: #555;
+    --border: rgba(11,76,81,0.12);
+    --radius: 16px;
+  }
 
-.container{
-  width:150%;
-  max-width:800px;
-  background:linear-gradient(180deg,#ffffff,#f3f7f5);
-  color:#0f172a;
-  border-radius:22px;
-  padding:44px 40px 46px;
-  box-shadow:
-    0 25px 60px rgba(0,0,0,.35),
-    inset 0 1px 0 #ffffff;
-  text-align:center;
-  position:relative;
-  overflow:hidden;
-}
+  html { scroll-behavior: smooth; }
 
-.container::before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:20px;
-  background:linear-gradient(90deg,#0ea55a,#22c55e,#16a34a);
-}
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--text);
+    overflow-x: hidden;
+  }
 
-.logo{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  font-size:18px;
-  font-weight:800;
-  color:#065f46;
-  margin-bottom:4px;
-  letter-spacing:.3px;
-}
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--teal-dark);
+    color: #a8d8db;
+    font-size: 0.75rem;
+    padding: 8px 0;
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  .topbar span { margin: 0 18px; }
+  .topbar i { margin-right: 5px; }
 
-.logo::before{
-  content:"✔";
-  display:inline-flex;
-  width:26px;
-  height:26px;
-  border-radius:50%;
-  background:linear-gradient(135deg,#16a34a,#22c55e);
-  color:#ffffff;
-  align-items:center;
-  justify-content:center;
-  font-size:14px;
-  box-shadow:0 4px 12px rgba(22,163,74,.45);
-}
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(244,242,238,0.94);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 5vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    transition: box-shadow 0.3s;
+  }
+  nav.scrolled { box-shadow: 0 4px 32px rgba(11,76,81,0.10); }
 
-h2{
-  margin:6px 0 6px;
-  font-size:20px;
-  font-weight:700;
-  color:#0f172a;
-}
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: var(--teal-dark);
+    letter-spacing: -0.03em;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--gold); }
 
-#reader{
-  width:200%;
-  max-width:450px;
-  margin:0 auto 14px;
-  border-radius:16px;
-  overflow:hidden;
-  background:#000;
-  border:4px solid transparent;
-  background:
-    linear-gradient(#000,#000) padding-box,
-    linear-gradient(135deg,#22c55e,#16a34a,#0ea55a) border-box;
-  box-shadow:0 10px 30px rgba(0,0,0,.25);
-}
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-light);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 2px;
+    background: var(--gold);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--teal-dark); }
+  .nav-links a:hover::after { width: 100%; }
 
-#resultado{
-  margin-top:12px;
-  padding:14px 14px;
-  border-radius:14px;
-  font-size:16px;
-  font-weight:700;
-  background:linear-gradient(180deg,#f8fafc,#eef2f7);
-  color:#0f172a;
-  min-height:52px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  box-shadow:
-    inset 0 1px 0 #ffffff,
-    0 6px 18px rgba(0,0,0,.12);
-  transition:all .25s ease;
-}
+  .nav-cta {
+    background: var(--teal-dark);
+    color: #fff !important;
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+    transition: background 0.25s, transform 0.2s !important;
+    white-space: nowrap;
+  }
+  .nav-cta:hover { background: var(--teal-mid) !important; transform: translateY(-1px); }
+  .nav-cta::after { display: none !important; }
 
-.sucesso{
-  background:linear-gradient(135deg,#16a34a,#22c55e) !important;
-  color:#ffffff !important;
-  box-shadow:0 10px 25px rgba(22,163,74,.45) !important;
-}
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 4px;
+  }
+  .hamburger span {
+    width: 24px; height: 2px;
+    background: var(--teal-dark);
+    border-radius: 2px;
+    transition: all 0.3s;
+    display: block;
+  }
 
-.aviso{
-  background:linear-gradient(135deg,#f59e0b,#fbbf24) !important;
-  color:#ffffff !important;
-  box-shadow:0 10px 25px rgba(245,158,11,.45) !important;
-}
+  /* ── HERO ── */
+  .hero {
+    min-height: 92vh;
+    background: var(--teal-dark);
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 80px 5vw 80px;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 80% 50%, rgba(29,191,204,0.13) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(201,168,76,0.10) 0%, transparent 60%);
+  }
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 700px;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.35);
+    color: var(--gold-light);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 50px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5.2rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.35s forwards;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--gold-light);
+    position: relative;
+  }
+  .hero-sub {
+    margin-top: 24px;
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.65;
+    max-width: 520px;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 42px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.65s forwards;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--gold);
+    color: var(--teal-dark);
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 14px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+    box-shadow: 0 6px 28px rgba(201,168,76,0.35);
+  }
+  .btn-primary:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 36px rgba(201,168,76,0.45);
+  }
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 14px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: border-color 0.25s, color 0.25s, background 0.25s;
+  }
+  .btn-secondary:hover {
+    border-color: rgba(255,255,255,0.6);
+    color: #fff;
+    background: rgba(255,255,255,0.07);
+  }
+  .hero-clients {
+    margin-top: 72px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.8s forwards;
+  }
+  .hero-clients p {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 18px;
+  }
+  .clients-row {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .client-pill {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.45);
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 7px 16px;
+    border-radius: 50px;
+    letter-spacing: 0.04em;
+  }
 
-.erro{
-  background:linear-gradient(135deg,#dc2626,#ef4444) !important;
-  color:#ffffff !important;
-  box-shadow:0 10px 25px rgba(220,38,38,.45) !important;
-}
+  /* ── SECTION SHELL ── */
+  section { padding: 100px 5vw; }
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal-light);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::before {
+    content: '';
+    width: 28px; height: 2px;
+    background: var(--teal-light);
+    border-radius: 2px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    color: var(--teal-dark);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    max-width: 620px;
+  }
+  .section-title em {
+    font-style: normal;
+    color: var(--gold);
+  }
 
-.rodape{
-  margin-top:16px;
-  font-size:12px;
-  color:#64748b;
-  letter-spacing:.3px;
-}
+  /* ── SERVICES ── */
+  .services-bg {
+    background: #f0ede6;
+    position: relative;
+    overflow: hidden;
+  }
+  .services-bg::after {
+    content: '';
+    position: absolute;
+    right: -200px; top: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(11,76,81,0.05) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .tabs-wrapper { margin-top: 56px; }
+  .tab-nav {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+    background: rgba(11,76,81,0.06);
+    padding: 6px;
+    border-radius: 14px;
+    width: fit-content;
+  }
+  .tab-btn {
+    padding: 11px 22px;
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-light);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s;
+    white-space: nowrap;
+  }
+  .tab-btn.active {
+    background: var(--teal-dark);
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(11,76,81,0.25);
+  }
+  .tab-btn:not(.active):hover { background: rgba(11,76,81,0.08); color: var(--teal-dark); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+
+  .tab-left h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--teal-dark);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 18px;
+  }
+  .tab-left p {
+    font-size: 1rem;
+    color: var(--text-light);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  .tab-right { padding-top: 8px; }
+  .benefit-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal-light);
+    margin-bottom: 18px;
+  }
+  .benefit-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .benefit-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .benefit-list li::before {
+    content: '';
+    width: 20px; height: 20px;
+    min-width: 20px;
+    background: rgba(11,76,81,0.08);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%230B4C51' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-top: 2px;
+  }
+
+  /* ── WHY ASCENDRA ── */
+  .why { background: var(--teal-dark); }
+  .why .section-label { color: var(--gold-light); }
+  .why .section-label::before { background: var(--gold-light); }
+  .why .section-title { color: #fff; max-width: 520px; }
+
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 60px;
+  }
+  .why-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    transition: background 0.3s, border-color 0.3s, transform 0.3s;
+    cursor: default;
+  }
+  .why-card:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(201,168,76,0.25);
+    transform: translateY(-4px);
+  }
+  .why-icon {
+    width: 48px; height: 48px;
+    background: rgba(201,168,76,0.12);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 22px;
+    font-size: 1.4rem;
+  }
+  .why-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  .why-card p {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.65;
+    font-weight: 300;
+  }
+
+  /* ── TESTIMONIAL ── */
+  .testimonial-section {
+    background: var(--off-white);
+    text-align: center;
+  }
+  .testimonial-section .section-label { justify-content: center; }
+  .testimonial-section .section-label::before { display: none; }
+  .testimonial-section .section-title { margin: 0 auto 56px; text-align: center; }
+
+  .testimonial-card {
+    max-width: 760px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 20px;
+    padding: 52px;
+    box-shadow: 0 12px 48px rgba(11,76,81,0.08);
+    position: relative;
+  }
+  .testimonial-card::before {
+    content: '"';
+    position: absolute;
+    top: 22px; left: 40px;
+    font-family: 'Syne', sans-serif;
+    font-size: 7rem;
+    line-height: 1;
+    color: rgba(11,76,81,0.07);
+    font-weight: 800;
+  }
+  .testimonial-card blockquote {
+    font-size: 1.15rem;
+    color: var(--text);
+    line-height: 1.8;
+    font-weight: 300;
+    font-style: italic;
+    margin-bottom: 32px;
+    position: relative;
+    z-index: 1;
+  }
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    justify-content: center;
+  }
+  .author-avatar {
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal-dark), var(--teal-glow));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .author-info strong { display: block; font-size: 0.9rem; color: var(--teal-dark); }
+  .author-info span { font-size: 0.8rem; color: var(--text-light); }
+
+  .yt-cta {
+    margin-top: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--teal-dark);
+    color: #fff;
+    text-decoration: none;
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.25s, transform 0.2s;
+  }
+  .yt-cta:hover { background: var(--teal-mid); transform: translateY(-2px); }
+  .yt-icon {
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── CONTACT ── */
+  .contact { background: #fff; }
+  .contact-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .contact-left p {
+    margin-top: 20px;
+    font-size: 1rem;
+    color: var(--text-light);
+    line-height: 1.7;
+    font-weight: 300;
+    max-width: 420px;
+  }
+  .contact-info { margin-top: 48px; display: flex; flex-direction: column; gap: 18px; }
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 0.9rem;
+    color: var(--text-light);
+  }
+  .contact-item-icon {
+    width: 40px; height: 40px;
+    background: rgba(11,76,81,0.07);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+    margin-bottom: 8px;
+  }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    border-color: var(--teal-light);
+    box-shadow: 0 0 0 3px rgba(14,107,115,0.1);
+  }
+  .form-group textarea { resize: vertical; min-height: 120px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .btn-submit {
+    width: 100%;
+    padding: 15px;
+    background: var(--teal-dark);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .btn-submit:hover { background: var(--teal-mid); transform: translateY(-1px); }
+
+  .form-success {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .form-success .check {
+    width: 64px; height: 64px;
+    background: rgba(11,76,81,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 1.8rem;
+  }
+  .form-success h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    color: var(--teal-dark);
+    margin-bottom: 10px;
+  }
+  .form-success p { color: var(--text-light); font-size: 0.95rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--teal-dark);
+    color: rgba(255,255,255,0.55);
+    padding: 60px 5vw 30px;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .footer-brand .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+  }
+  .footer-brand .logo-text span { color: var(--gold); }
+  .footer-brand p {
+    font-size: 0.875rem;
+    line-height: 1.65;
+    max-width: 260px;
+    color: rgba(255,255,255,0.45);
+  }
+  .footer-socials { display: flex; gap: 10px; margin-top: 24px; }
+  .social-link {
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: background 0.2s, color 0.2s;
+  }
+  .social-link:hover { background: var(--gold); color: var(--teal-dark); }
+
+  .footer-col h5 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 18px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col ul a {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.45);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-col ul a:hover { color: rgba(255,255,255,0.9); }
+
+  .footer-bottom {
+    padding-top: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem;
+  }
+
+  /* ── WHATSAPP ── */
+  .wa-float {
+    position: fixed;
+    bottom: 28px; right: 28px;
+    width: 58px; height: 58px;
+    background: #25D366;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 24px rgba(37,211,102,0.45);
+    z-index: 999;
+    text-decoration: none;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .wa-float:hover { transform: scale(1.08); box-shadow: 0 8px 30px rgba(37,211,102,0.55); }
+  .wa-float svg { width: 30px; height: 30px; fill: #fff; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .tab-panel.active { grid-template-columns: 1fr; }
+    .why-grid { grid-template-columns: 1fr 1fr; }
+    .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 36px; }
+  }
+  @media (max-width: 620px) {
+    section { padding: 70px 5vw; }
+    .hero { padding: 60px 5vw 70px; }
+    .why-grid { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+    .form-row { grid-template-columns: 1fr; }
+    .tab-nav { width: 100%; }
+    .tab-btn { flex: 1; text-align: center; }
+    .testimonial-card { padding: 36px 28px; }
+  }
+
+  /* ── MOBILE NAV ── */
+  .mobile-nav {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--teal-dark);
+    z-index: 200;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 36px;
+  }
+  .mobile-nav.open { display: flex; }
+  .mobile-nav a {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .mobile-nav a:hover { color: var(--gold-light); }
+  .mobile-close {
+    position: absolute;
+    top: 22px; right: 22px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #fff;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 </style>
 </head>
 <body>
 
-<div class="container">
-
-  <div class="logo">Sistema de Inscrição • UAADEM</div>
-  <h2>Leitor de QR Code</h2>
-
-  <div id="reader"></div>
-  <div id="resultado">Aponte a câmera para o QR Code</div>
-
-  <div class="rodape">
-    Validação automática de presença
-  </div>
-
+<!-- TOPBAR -->
+<div class="topbar">
+  <span>📞 +(61) 3181-0918</span>
+  <span>📍 Brasília, DF</span>
+  <span>✉️ contato@ascendra.com.br</span>
 </div>
 
-<!-- som de confirmação -->
-<audio id="beep" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">Ascen<span>dra</span></a>
+  <ul class="nav-links">
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="#servicos">Serviços</a></li>
+    <li><a href="#diferenciais">Diferenciais</a></li>
+    <li><a href="#contato">Blog</a></li>
+    <li><a href="#contato" class="nav-cta">Fale Conosco</a></li>
+  </ul>
+  <button class="hamburger" id="hamBtn" aria-label="Abrir menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-close" id="closeNav">✕</button>
+  <a href="#sobre" onclick="closeMobileNav()">Sobre</a>
+  <a href="#servicos" onclick="closeMobileNav()">Serviços</a>
+  <a href="#diferenciais" onclick="closeMobileNav()">Diferenciais</a>
+  <a href="#contato" onclick="closeMobileNav()">Contato</a>
+  <a href="#contato" onclick="closeMobileNav()" style="color:var(--gold-light)">Fale Conosco →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">Fábrica de Software</div>
+    <h1>Desenvolvimento de<br><em>Software Sob Medida</em></h1>
+    <p class="hero-sub">Com uma abordagem ágil e centrada na qualidade, desenvolvemos sistemas robustos, escaláveis e seguros para o crescimento do seu negócio.</p>
+    <div class="hero-actions">
+      <a href="#contato" class="btn-primary">
+        Solicitar Orçamento
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="#servicos" class="btn-secondary">
+        Ver Serviços
+      </a>
+    </div>
+    <div class="hero-clients">
+      <p>Quem está crescendo junto</p>
+      <div class="clients-row">
+        <span class="client-pill">Governo Federal</span>
+        <span class="client-pill">Empresas do Agronegócio</span>
+        <span class="client-pill">Financeiras</span>
+        <span class="client-pill">Saúde</span>
+        <span class="client-pill">Varejo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services-bg" id="servicos">
+  <div class="section-label reveal">Nossos Serviços</div>
+  <div class="section-title reveal">O que a <em>Ascendra</em> pode fazer pelo seu negócio</div>
+
+  <div class="tabs-wrapper reveal">
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="0">Soluções Personalizadas</button>
+      <button class="tab-btn" data-tab="1">Quality Assurance (QA)</button>
+      <button class="tab-btn" data-tab="2">Outsourcing</button>
+      <button class="tab-btn" data-tab="3">Cloud Native AWS</button>
+    </div>
+
+    <!-- Tab 0 -->
+    <div class="tab-panel active">
+      <div class="tab-left">
+        <h3>Soluções Personalizadas para o Seu Negócio</h3>
+        <p>Criamos soluções de software sob medida, totalmente alinhadas às necessidades e processos exclusivos da sua empresa. Nossa equipe especializada entrega sistemas eficientes, escaláveis e inovadores que aumentam a produtividade e proporcionam uma gestão mais ágil e assertiva.</p>
+      </div>
+      <div class="tab-right">
+        <div class="benefit-label">Benefícios principais</div>
+        <ul class="benefit-list">
+          <li>Desenvolvimento de software totalmente customizado</li>
+          <li>Integração perfeita com sistemas existentes</li>
+          <li>Automação de processos para otimizar a operação</li>
+          <li>Uso de tecnologias avançadas e escaláveis</li>
+          <li>Suporte contínuo e evolução constante das soluções</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Tab 1 -->
+    <div class="tab-panel">
+      <div class="tab-left">
+        <h3>Quality Assurance (QA) – Garantia de qualidade para seus sistemas</h3>
+        <p>Nosso serviço de QA assegura que seus sistemas e softwares atendam aos mais altos padrões de qualidade, desempenho e segurança. Com testes manuais e automatizados, garantimos que suas soluções funcionem de forma eficiente, sem falhas e com a melhor experiência para o usuário.</p>
+      </div>
+      <div class="tab-right">
+        <div class="benefit-label">Principais benefícios</div>
+        <ul class="benefit-list">
+          <li>Testes completos de funcionalidade, usabilidade e desempenho</li>
+          <li>Implementação de testes automatizados para maior cobertura</li>
+          <li>Identificação de bugs e falhas antes do lançamento</li>
+          <li>Garantia de conformidade com os requisitos do cliente</li>
+          <li>Melhoria contínua da qualidade do software</li>
+          <li>Minimização de riscos e otimização de processos</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Tab 2 -->
+    <div class="tab-panel">
+      <div class="tab-left">
+        <h3>Outsourcing de Tecnologia e Desenvolvimento</h3>
+        <p>Com nosso serviço de Outsourcing, sua empresa conta com uma equipe especializada para gerenciar e desenvolver soluções tecnológicas sob demanda. Desde a criação de software até a gestão de infraestrutura, garantimos inovação, eficiência e segurança, permitindo que você foque no crescimento do seu negócio.</p>
+      </div>
+      <div class="tab-right">
+        <div class="benefit-label">Como podemos ajudar</div>
+        <ul class="benefit-list">
+          <li>Desenvolvimento de soluções tecnológicas sob medida</li>
+          <li>Gestão de infraestrutura de TI e suporte contínuo</li>
+          <li>Acesso a equipe especializada sem contratações internas</li>
+          <li>Redução de custos operacionais com soluções escaláveis</li>
+          <li>Flexibilidade para atender às demandas tecnológicas</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Tab 3 -->
+    <div class="tab-panel">
+      <div class="tab-left">
+        <h3>Desenvolvimento Cloud Native com AWS</h3>
+        <p>Nosso serviço Cloud Native com AWS permite criar soluções altamente escaláveis, flexíveis e seguras, aproveitando o poder da Amazon Web Services. Desenvolvemos aplicações nativas da nuvem, otimizadas para performance, custo e agilidade.</p>
+      </div>
+      <div class="tab-right">
+        <div class="benefit-label">Diferenciais</div>
+        <ul class="benefit-list">
+          <li>Soluções totalmente nativas da nuvem com AWS</li>
+          <li>Escalabilidade e flexibilidade para crescimento</li>
+          <li>Arquiteturas modernas: microserviços e containers</li>
+          <li>Segurança avançada e alta disponibilidade de dados</li>
+          <li>Redução de custos com pagamento conforme uso</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY ASCENDRA -->
+<section class="why" id="diferenciais">
+  <div class="section-label reveal">Por que a Ascendra</div>
+  <div class="section-title reveal">Tecnologia para <em>grandes resultados</em></div>
+
+  <div class="why-grid">
+    <div class="why-card reveal">
+      <div class="why-icon">🎯</div>
+      <h4>Abordagem Ágil</h4>
+      <p>Utilizamos metodologias ágeis para entregar resultados rápidos e iterativos, mantendo a qualidade em cada sprint.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-icon">🔒</div>
+      <h4>Segurança em Primeiro Lugar</h4>
+      <p>Todos os sistemas são desenvolvidos com as melhores práticas de segurança, garantindo a proteção dos seus dados.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-icon">📈</div>
+      <h4>Escalabilidade Garantida</h4>
+      <p>Nossas soluções são projetadas para crescer junto com o seu negócio, sem gargalos de performance.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-icon">🤝</div>
+      <h4>Suporte Contínuo</h4>
+      <p>Equipe dedicada para manutenção e evolução contínua das soluções entregues, garantindo sua operação.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-icon">☁️</div>
+      <h4>Especialistas em AWS</h4>
+      <p>Time certificado em Amazon Web Services para soluções cloud robustas e otimizadas em custo.</p>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-icon">⚡</div>
+      <h4>Integração Total</h4>
+      <p>Conectamos seu novo software aos sistemas já existentes, incluindo TOTVS e outras plataformas ERP.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="testimonial-section">
+  <div class="section-label reveal">Depoimentos</div>
+  <div class="section-title reveal">O que nossos clientes <em>dizem</em></div>
+
+  <div class="testimonial-card reveal">
+    <blockquote>
+      A Ascendra transformou completamente a gestão dos nossos processos internos. O sistema entregue é exatamente o que precisávamos — robusto, fácil de usar e com um suporte incrível. Recomendo fortemente para qualquer empresa que busca uma solução tecnológica séria e de qualidade.
+    </blockquote>
+    <div class="testimonial-author">
+      <div class="author-avatar">JM</div>
+      <div class="author-info">
+        <strong>João Mendes</strong>
+        <span>Diretor de TI — Empresa Parceira</span>
+      </div>
+    </div>
+  </div>
+
+  <a href="https://www.youtube.com/watch?v=KfnZk1onVqI" target="_blank" class="yt-cta reveal">
+    <div class="yt-icon">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    </div>
+    Assistir depoimento completo no YouTube
+  </a>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contato">
+  <div class="contact-inner">
+    <div class="contact-left reveal">
+      <div class="section-label">Vamos conversar?</div>
+      <div class="section-title">Nossa equipe está<br>pronta para <em>te ajudar</em></div>
+      <p>Fale conosco sobre seus desafios tecnológicos. Desenvolvemos a solução ideal para o seu negócio com agilidade e qualidade.</p>
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="contact-item-icon">📞</div>
+          <div>
+            <strong style="display:block; font-size:0.9rem; color:var(--teal-dark)">(61) 3181-0918</strong>
+            <span style="font-size:0.8rem">Seg a Sex, 8h às 18h</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon">✉️</div>
+          <div>
+            <strong style="display:block; font-size:0.9rem; color:var(--teal-dark)">contato@ascendra.com.br</strong>
+            <span style="font-size:0.8rem">Respondemos em até 24h</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon">📍</div>
+          <div>
+            <strong style="display:block; font-size:0.9rem; color:var(--teal-dark)">Brasília, DF</strong>
+            <span style="font-size:0.8rem">SCN Q1 Bl C, Sala 1108, Brasília Trade Center</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <form id="contactForm">
+        <div class="form-group">
+          <label>Nome completo *</label>
+          <input type="text" placeholder="Seu nome" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>E-mail *</label>
+            <input type="email" placeholder="seu@email.com" required>
+          </div>
+          <div class="form-group">
+            <label>Telefone *</label>
+            <input type="tel" placeholder="(61) 99999-9999" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Cargo *</label>
+          <input type="text" placeholder="Seu cargo na empresa" required>
+        </div>
+        <div class="form-group">
+          <label>Como podemos ajudar? *</label>
+          <textarea placeholder="Descreva seu projeto ou necessidade..." required></textarea>
+        </div>
+        <button type="submit" class="btn-submit">Enviar Mensagem →</button>
+      </form>
+      <div class="form-success" id="formSuccess">
+        <div class="check">✅</div>
+        <h3>Mensagem enviada!</h3>
+        <p>Em breve nossa equipe entrará em contato com você.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo-text">Ascen<span>dra</span></div>
+      <p>Tecnologia para grandes resultados. Desenvolvemos soluções robustas e escaláveis para empresas que querem crescer.</p>
+      <div class="footer-socials">
+        <a class="social-link" href="https://www.linkedin.com/company/ascendra-tecnologia" target="_blank" title="LinkedIn">in</a>
+        <a class="social-link" href="https://www.instagram.com/ascendratec/" target="_blank" title="Instagram">📸</a>
+        <a class="social-link" href="https://www.youtube.com/channel/UCtTJBCUUH_bz6h7iiTHtUjw" target="_blank" title="YouTube">▶</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Institucional</h5>
+      <ul>
+        <li><a href="https://ascendra.com.br">Home</a></li>
+        <li><a href="https://ascendra.com.br/quem-somos/">Sobre a Ascendra</a></li>
+        <li><a href="https://ascendra.com.br/contato/">Contato</a></li>
+        <li><a href="https://jobs.quickin.io/ascendra/pages/carreiras" target="_blank">Trabalhe Conosco</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Serviços</h5>
+      <ul>
+        <li><a href="https://ascendra.com.br/fabrica-de-software/">Fábrica de Software</a></li>
+        <li><a href="https://ascendra.com.br/servicos-totvs/">Serviços TOTVS</a></li>
+        <li><a href="https://ascendra.com.br/analytics/">Analytics</a></li>
+        <li><a href="https://ascendra.com.br/cloud-aws/">Cloud AWS</a></li>
+        <li><a href="https://ascendra.com.br/gestao-estrategica-de-ti-e-projetos/">Gestão de TI</a></li>
+        <li><a href="https://ascendra.com.br/fluig/">Fluig</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contato</h5>
+      <ul>
+        <li><a href="tel:+556131810918">(61) 3181-0918</a></li>
+        <li><a href="mailto:contato@ascendra.com.br">contato@ascendra.com.br</a></li>
+        <li><a href="#">SCN Q1 Bl C, Sala 1108<br>Brasília Trade Center</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Ascendra Tecnologia. Todos os direitos reservados.</span>
+    <span>Soluções Inovadoras e Eficientes</span>
+  </div>
+</footer>
+
+<!-- WhatsApp float -->
+<a class="wa-float" href="https://wa.me/556131810918?text=Olá!%20Gostaria%20de%20mais%20informações." target="_blank" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
 
 <script>
-const reader = new Html5Qrcode("reader");
+  // ── Sticky nav shadow
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 30);
+  });
 
-const webAppURL = "https://script.google.com/macros/s/AKfycbz1vTqZNoaqiAEhi8HE4DzyEIrr6DjUfJ6uYoz4Zn1OUOfF7w44XvByW1aTLumd0nnzJQ/exec";
+  // ── Mobile nav
+  const hamBtn = document.getElementById('hamBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  const closeNavBtn = document.getElementById('closeNav');
+  hamBtn.addEventListener('click', () => mobileNav.classList.add('open'));
+  closeNavBtn.addEventListener('click', () => mobileNav.classList.remove('open'));
+  function closeMobileNav() { mobileNav.classList.remove('open'); }
 
-let jaLeu = false;
-
-reader.start(
-  { facingMode: "environment" },
-  {
-    fps: 10,
-    qrbox: { width: 220, height: 220 }
-  },
-  (textoLido) => {
-
-    if(jaLeu) return;
-
-    jaLeu = true;
-    validar(textoLido);
-
-  }
-).catch(err => {
-
-  const resultado = document.getElementById("resultado");
-  resultado.className = "erro";
-  resultado.innerText = "Não foi possível acessar a câmera";
-
-  console.error(err);
-});
-
-function validar(texto){
-
-  const resultado = document.getElementById("resultado");
-
-  let id = texto;
-
-  if(texto.includes("?id=")){
-    const url = new URL(texto);
-    id = url.searchParams.get("id");
-  }
-
-  fetch(webAppURL + "?id=" + encodeURIComponent(id))
-    .then(r => r.text())
-    .then(resposta => {
-
-      resultado.className = "";
-
-      let txt = resposta.toLowerCase();
-
-      // tenta interpretar como JSON
-      try {
-
-        const dados = JSON.parse(resposta);
-
-        resultado.innerHTML = `
-        <div style="text-align:left; line-height:1.5">
-          <strong>Nome:</strong> ${dados.nome || "-"}<br>
-          <strong>Status:</strong> ${dados.status || "-"}<br>
-          <strong>Telefone:</strong> ${dados.telefone || "-"}<br>
-          <strong>E-mail:</strong> ${dados.email || "-"}<br>
-          <strong>Congregação:</strong> ${dados.congregacao || "-"}<br>
-          <strong>Grupo:</strong> ${dados.grupo || "-"}
-        </div>
-      `;
-
-        resultado.classList.add("sucesso");
-        document.getElementById("beep").play().catch(()=>{});
-        reader.stop().catch(()=>{});
-
-        setTimeout(() => {
-          jaLeu = false;
-        }, 3000);
-
-        return;
-
-      } catch (e) {
-        // não é JSON, continua normal
-      }
-
-      resultado.innerText = resposta;
-
-      if(
-  txt.includes("sucesso") ||
-  txt.includes("confirmada") ||
-  txt.includes("confirmado")
-){
-        resultado.classList.add("sucesso");
-        document.getElementById("beep").play().catch(()=>{});
-        reader.stop().catch(()=>{});
-      }
-      else if(txt.includes("já")){
-        resultado.classList.add("aviso");
-      }
-      else{
-        resultado.classList.add("erro");
-      }
-
-      setTimeout(() => {
-        jaLeu = false;
-      }, 2500);
-
-    })
-    .catch(() => {
-
-      resultado.className = "";
-      resultado.innerText = "Erro ao validar inscrição";
-      resultado.classList.add("erro");
-      jaLeu = false;
-
+  // ── Tabs
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.tab);
+      tabBtns.forEach(b => b.classList.remove('active'));
+      tabPanels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      tabPanels[idx].classList.add('active');
     });
+  });
 
-}
+  // ── Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // ── Contact form
+  const form = document.getElementById('contactForm');
+  const success = document.getElementById('formSuccess');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    form.style.display = 'none';
+    success.style.display = 'block';
+  });
 </script>
-
 </body>
 </html>
